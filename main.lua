@@ -574,15 +574,15 @@ zuiLib.initialize = function(s)
 			local slider = {
 				value = -1,
 				maxValue = -1,
-        minValue = -5,
+        		minValue = -5,
 			}
 			
 			checkOptional(sliderConfig, {
 				name = "New Slider",
 				value = 0,
-        minValue = 0,
+        		minValue = 0,
 				maxValue = 50,
-        decimalPlaces = 0
+        		decimalPlaces = 0,
 				callback = function(v) end,
 			})
 			
@@ -698,10 +698,11 @@ zuiLib.initialize = function(s)
 				local dragging = false
 				
 				slider.update = function(value)
-					slider.valueText = tostring(math.round(value))
-					slider.value = math.round(value)
-					slider.filler.Size = UDim2.fromScale(slider.filler.Size.X.Scale * slider.maxValue, 1)
+					slider.valueText.Text = value
+					slider.filler.Size = UDim2.fromScale(value > 0 and 1 / value or 0, 1)
 				end
+				
+				slider.valueText = zui["1c"]
 				
 				local mouseEnter = slider.dragger.MouseEnter:Connect(function()
 					hover = true
@@ -717,17 +718,16 @@ zuiLib.initialize = function(s)
 							dragging = true
 							
 							while dragging do
-							
-								local output = math.clamp((mouse.X - slider.dragger.AbsolutePosition.X) / slider.dragger.AbsoluteSize.X, 0, 1)
-								local value = math.clamp(output * slider.maxValue, slider.minValue, slider.MaxValue)
+								local output = math.clamp(((Vector2.new(mouse.X, mouse.Y) - slider.dragger.AbsolutePosition) / slider.dragger.AbsoluteSize).X, 0, 1)
+								local mapped = sliderConfig.minValue + (output * (sliderConfig.maxValue - sliderConfig.minValue))
 								
-								slider.valueText.Text = string.format("%." .. sliderConfig.decimalPlaces .. "f", math.clamp(value, slider.minValue, slider.maxValue))
-								slider.value = tonumber(string.format("%." .. sliderConfig.decimalPlaces .. "f", math.clamp(value, slider.minValue, slider.maxValue)))
+								local value = tonumber(string.format("%." .. (sliderConfig.decimalPlaces or 0) .. "f", mapped))
+								
+								slider.valueText.Text = value
 								slider.filler.Size = UDim2.fromScale(output, 1)
-								sliderConfig.callback(slider.value)
+								sliderConfig.callback(value)
 								
 								task.wait()
-								
 							end
 						end
 					end
@@ -740,11 +740,10 @@ zuiLib.initialize = function(s)
 				end)
 				
 				zuiLib.connections["Slider_" .. global.elementCounter] = {mouseEnter, mouseLeave, mouseDrag, mouseEnd}
-				
+				slider.update(sliderConfig.value)
 			end
-			
+
 			slider.init()
-      slider.update(slider.value)
 			return slider
 		end
 		

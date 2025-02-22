@@ -588,6 +588,7 @@ zuiLib.initialize = function(s)
 			
 			slider.value = sliderConfig.value
 			slider.maxValue = sliderConfig.maxValue
+			slider.callback = sliderConfig.callback
 			
 			slider.init = function()
 				do
@@ -698,8 +699,17 @@ zuiLib.initialize = function(s)
 				local dragging = false
 				
 				slider.update = function(value)
-					slider.valueText.Text = value
-					slider.filler.Size = UDim2.fromScale(value > 0 and 1 / value or 0, 1)
+					local eq = value > 0 and value / sliderConfig.maxValue or 0
+					
+					slider.valueText.Text = value < sliderConfig.maxValue and value or sliderConfig.maxValue
+					slider.filler.Size = UDim2.fromScale(eq <= 1 and eq or 1, 1)
+					slider.value = value
+				end
+				
+				slider.updateProperties = function(config)
+					checkOptional(config, sliderConfig)
+					sliderConfig = config
+					slider.update(slider.value)
 				end
 				
 				slider.valueText = zui["1c"]
@@ -725,6 +735,7 @@ zuiLib.initialize = function(s)
 								
 								slider.valueText.Text = value
 								slider.filler.Size = UDim2.fromScale(output, 1)
+								slider.value = value
 								sliderConfig.callback(value)
 								
 								task.wait()

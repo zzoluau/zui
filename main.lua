@@ -19,22 +19,22 @@ local global = {
 }
 
 local function checkOptional(t, default)
-		if typeof(t) == "nil" then
-			t = default
-			return
+	if typeof(t) == "nil" then
+		t = default
+		return
+	end
+
+	for name, value in pairs(default) do
+		if t[name] == nil or typeof(t[name]) ~= typeof(value) then
+			t[name] = value
 		end
-		
-		for name, value in pairs(default) do
-			if t[name] == nil or typeof(t[name]) ~= typeof(value) then
-				t[name] = value
-			end
-		end
+	end
 end
 
 zuiLib.initialize = function(s)
 	local zuiClass = {}
 	local self = zuiLib
-	
+
 	checkOptional(s, {
 		accent = Color3.fromRGB(255, 178, 241),
 		bg = Color3.fromRGB(50, 50, 50),
@@ -43,15 +43,15 @@ zuiLib.initialize = function(s)
 			toggleVis = Enum.KeyCode.RightAlt
 		}
 	})
-	
+
 	self.settings = s
-	
+
 	local function _()
 		-- StarterGui._zui
 		zui["1"] = Instance.new("ScreenGui", plrGui);
 		zui["1"]["Name"] = [[_zui]];
 		zui["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
-		
+
 		zui["2"] = Instance.new("Frame", zui["1"]);
 		zui["2"]["BorderSizePixel"] = 0;
 		zui["2"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -59,19 +59,19 @@ zuiLib.initialize = function(s)
 		zui["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 		zui["2"]["Name"] = [[zMain]];
 		zui["2"]["BackgroundTransparency"] = 1;
-		
+
 		-- StarterGui._zui.zMain.UIPadding
 		zui["23"] = Instance.new("UIPadding", zui["2"]);
 		zui["23"]["PaddingTop"] = UDim.new(0, 10);
 		zui["23"]["PaddingLeft"] = UDim.new(0, 10);
-		
+
 		-- StarterGui._zui.zMain.UIListLayout
 		zui["3"] = Instance.new("UIListLayout", zui["2"]);
 		zui["3"]["Wraps"] = true;
 		zui["3"]["Padding"] = UDim.new(0, 10);
 		zui["3"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
 		zui["3"]["FillDirection"] = Enum.FillDirection.Horizontal;
-		
+
 		do --> TOAST
 			-- StarterGui._zui.zToast
 			zui["28"] = Instance.new("Frame", zui["1"]);
@@ -194,16 +194,16 @@ zuiLib.initialize = function(s)
 			zui["35"]["PaddingLeft"] = UDim.new(0, 10);
 		end
 	end; _()
-	
+
 	zuiClass.makeTab = function(tabConfig)
 		local tab = {}
 		checkOptional(tabConfig, {
 			name = "New Tab",
 		})
-		
+
 		tab.myId = global.elementCounter
 		global.elementCounter += 1
-		
+
 		local function _()
 			-- StarterGui._zui.zMain.zTab
 			zui["4"] = Instance.new("Frame", zui["2"]);
@@ -214,7 +214,7 @@ zuiLib.initialize = function(s)
 			zui["4"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 			zui["4"]["Name"] = [[zTab]];
 			tab.tabFrame = zui["4"]
-			
+
 			-- StarterGui._zui.zMain.zTab.Title
 			zui["5"] = Instance.new("TextLabel", zui["4"]);
 			zui["5"]["BorderSizePixel"] = 0;
@@ -233,16 +233,16 @@ zuiLib.initialize = function(s)
 			zui["6"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
 			zui["6"]["FillDirection"] = Enum.FillDirection.Horizontal;
 		end; _()
-		
+
 		tab.newSection = function(sectionConfig)
 			local section = {}
 			checkOptional(sectionConfig, {
 				name = "New Section"
 			})
-			
+
 			section.myId = global.elementCounter
 			global.elementCounter += 1
-			
+
 			section.init = function()
 				-- StarterGui._zui.zMain.zTab.Section
 				zui["7"] = Instance.new("Frame", zui["4"]);
@@ -299,18 +299,18 @@ zuiLib.initialize = function(s)
 				zui["c"]["Size"] = UDim2.new(1, 100, 0, 1);
 				zui["c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 				zui["c"]["Name"] = [[Divider]];
-				
+
 				section.sectionObj = zui["7"]
 			end
-			
+
 			section.update = function(newsectionConfig)
 				newsectionConfig = newsectionConfig or {
 					name = "New Section"
 				}
-				
+
 				zui["8"]["Text"] = newsectionConfig.name;
 			end
-			
+
 			section.destroy = function()
 				if section.sectionObj then
 					section.sectionObj:Destroy()
@@ -318,25 +318,25 @@ zuiLib.initialize = function(s)
 					warn("z: No section to destroy")
 				end
 			end			
-			
+
 			section.init()
 			return section
 		end
-		
+
 		tab.newToggle = function(toggleConfig)
 			local toggle = {
 				enabled = false
 			}
-			
+
 			checkOptional(toggleConfig, {
 				name = "New Toggle",
 				enabled = toggle.enabled or false,
 				callback = function(n) end,
 			})
-			
+
 			toggle.myId = global.elementCounter
 			global.elementCounter += 1
-			
+
 			function toggle.init()
 				do
 					-- StarterGui._zui.zMain.zTab.Toggle
@@ -408,13 +408,13 @@ zuiLib.initialize = function(s)
 					zui["13"]["PaddingTop"] = UDim.new(0, 5);
 					zui["13"]["PaddingBottom"] = UDim.new(0, 5);
 				end
-				
+
 				local hover = false
 				local debounce = false
-				
+
 				local mouseEnter = toggle.toggler.MouseEnter:Connect(function()
 					hover = true
-					
+
 					mouse.Button1Down:Connect(function()
 						if not hover then else
 							if debounce then
@@ -423,47 +423,47 @@ zuiLib.initialize = function(s)
 								toggle.enabled = not toggle.enabled
 								toggle.togglerIcon.Visible = toggle.enabled
 								toggleConfig.callback(toggle.enabled)
-								
+
 								debounce = true
 								task.wait(0.1) ; debounce = false
 							end
 						end
 					end)
 				end)
-				
+
 				local mouseLeave = toggle.toggler.MouseLeave:Connect(function()
 					hover = false
 				end)
-				
+
 				zuiLib.connections["Toggle_" .. global.elementCounter] = {mouseEnter, mouseLeave}
 			end
-			
+
 			toggle.destroy = function()
 				if toggle.rootFrame then
 					for index, connection in pairs(zuiLib.connections[toggleConfig.name]) do
 						connection:Disconnect()
 					end
-					
+
 					toggle.rootFrame:Destroy()
 				else
 					warn("z: No toggle to destroy")
 				end
 			end
-			
+
 			toggle.init()
 			return toggle
 		end
-		
+
 		tab.newButton = function(buttonConfig)
 			local button = {}
 			checkOptional(buttonConfig, {
 				name = "New Button",
 				callback = function() end,
 			})
-			
+
 			button.myId = global.elementCounter
 			global.elementCounter += 1
-			
+
 			function button.init()
 				do
 					-- StarterGui._zui.zMain.zTab.Button
@@ -521,17 +521,17 @@ zuiLib.initialize = function(s)
 					zui["22"]["Name"] = [[ClickIndicator]];
 					zui["22"]["SizeConstraint"] = Enum.SizeConstraint.RelativeYY
 				end
-				
+
 				local hover = false
 				local debounce = false
-				
+
 				button.button = zui["1e"]
-				
+
 				local mouseEnter = button.button.MouseEnter:Connect(function()
 					hover = true
-					
+
 					ts:Create(button.button, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = self.settings.darkBg}):Play()
-					
+
 					mouse.Button1Down:Connect(function()
 						if not hover then else
 							if debounce then
@@ -544,52 +544,52 @@ zuiLib.initialize = function(s)
 						end
 					end)
 				end)
-				
+
 				local mouseLeave = button.button.MouseLeave:Connect(function()
 					hover = false
-					
+
 					ts:Create(button.button, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(46,46,46)}):Play()
 				end)
-				
+
 				zuiLib.connections["Button_" .. global.elementCounter] = {mouseEnter, mouseLeave}
 			end
-			
+
 			button.destroy = function()
 				if button.button then
 					for index, connection in pairs(zuiLib.connections["Button_" .. button.myId]) do
 						connection:Disconnect()
 					end
-					
+
 					button.button:Destroy()
 				else
 					warn("z: No button to destroy")
 				end
 			end
-			
+
 			button.init()
 			return button
 		end
-		
+
 		tab.newSlider = function(sliderConfig)
 			local slider = {
 				value = -1,
 				maxValue = -1,
-        		minValue = -5,
+				minValue = -5,
 			}
-			
+
 			checkOptional(sliderConfig, {
 				name = "New Slider",
 				value = 0,
-        		minValue = 0,
+				minValue = 0,
 				maxValue = 50,
-        		decimalPlaces = 0,
+				decimalPlaces = 0,
 				callback = function(v) end,
 			})
-			
+
 			slider.value = sliderConfig.value
 			slider.maxValue = sliderConfig.maxValue
 			slider.callback = sliderConfig.callback
-			
+
 			slider.init = function()
 				do
 					-- StarterGui._zui.zMain.zTab.Slider
@@ -624,7 +624,7 @@ zuiLib.initialize = function(s)
 					zui["17"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 					zui["17"]["Name"] = [[Dragger]];
 					slider.dragger = zui["17"]
-					
+
 
 					-- StarterGui._zui.zMain.zTab.Slider.Dragger.Filler
 					zui["18"] = Instance.new("Frame", zui["17"]);
@@ -694,62 +694,62 @@ zuiLib.initialize = function(s)
 					zui["1d"] = Instance.new("UIPadding", zui["19"]);
 					zui["1d"]["PaddingRight"] = UDim.new(0, 10);
 				end
-				
+
 				local hover = false
 				local dragging = false
-				
+
 				slider.update = function(value)
 					local eq = value > 0 and value / sliderConfig.maxValue or 0
-					
+
 					slider.valueText.Text = value < sliderConfig.maxValue and value or sliderConfig.maxValue
 					slider.filler.Size = UDim2.fromScale(eq <= 1 and eq or 1, 1)
 					slider.value = value
 				end
-				
+
 				slider.updateProperties = function(config)
 					checkOptional(config, sliderConfig)
 					sliderConfig = config
 					slider.update(slider.value)
 				end
-				
+
 				slider.valueText = zui["1c"]
-				
+
 				local mouseEnter = slider.dragger.MouseEnter:Connect(function()
 					hover = true
 				end)
-				
+
 				local mouseLeave = slider.dragger.MouseLeave:Connect(function()
 					hover = false
 				end)
-				
+
 				local mouseDrag = uis.InputBegan:Connect(function(io, gpe)
 					if io.UserInputType == Enum.UserInputType.MouseButton1 or io.UserInputType == Enum.UserInputType.Touch and hover then
 						if not hover then else
 							dragging = true
-							
+
 							while dragging do
 								local output = math.clamp(((Vector2.new(mouse.X, mouse.Y) - slider.dragger.AbsolutePosition) / slider.dragger.AbsoluteSize).X, 0, 1)
 								local mapped = sliderConfig.minValue + (output * (sliderConfig.maxValue - sliderConfig.minValue))
-								
+
 								local value = tonumber(string.format("%." .. (sliderConfig.decimalPlaces or 0) .. "f", mapped))
-								
+
 								slider.valueText.Text = value
 								slider.filler.Size = UDim2.fromScale(output, 1)
 								slider.value = value
 								sliderConfig.callback(value)
-								
+
 								task.wait()
 							end
 						end
 					end
 				end)
-				
+
 				local mouseEnd = uis.InputEnded:Connect(function(io, gpe)
 					if io.UserInputType == Enum.UserInputType.MouseButton1 or io.UserInputType == Enum.UserInputType.Touch then
 						dragging = false
 					end
 				end)
-				
+
 				zuiLib.connections["Slider_" .. global.elementCounter] = {mouseEnter, mouseLeave, mouseDrag, mouseEnd}
 				slider.update(sliderConfig.value)
 			end
@@ -758,9 +758,267 @@ zuiLib.initialize = function(s)
 			return slider
 		end
 		
+		tab.newDropdown = function(dropdownConfig)
+			local dropdown = {}
+			
+			checkOptional(dropdownConfig, {
+				name = "New Dropdown",
+				options = {
+					[1] = "Example 1",
+					[2] = "Example 2"
+				},
+				default = 1,
+				callback = function(choice)
+					print(choice)	
+				end,
+			})
+			
+			dropdown.myId = global.elementCounter
+			global.elementCounter += 1
+			
+			dropdown.init = function()
+				do
+					dropdown.objects = {}
+					-- StarterGui._zui.zMain.zTab.Dropdown
+					zui["94"] = Instance.new("Frame", zui["4"]);
+					zui["94"]["BorderSizePixel"] = 0;
+					zui["94"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+					zui["94"]["AutomaticSize"] = Enum.AutomaticSize.Y;
+					zui["94"]["Size"] = UDim2.new(1, 0, 0, 0);
+					zui["94"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+					zui["94"]["Name"] = [[Dropdown]];
+					zui["94"]["BackgroundTransparency"] = 1;
+					
+					dropdown.objects.dropdown = zui["94"]
+
+
+					-- StarterGui._zui.zMain.zTab.Dropdown.UIListLayout
+					zui["95"] = Instance.new("UIListLayout", zui["94"]);
+					zui["95"]["HorizontalFlex"] = Enum.UIFlexAlignment.SpaceBetween;
+					zui["95"]["Padding"] = UDim.new(0, 5);
+					zui["95"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
+
+
+					-- StarterGui._zui.zMain.zTab.Dropdown.UIPadding
+					zui["96"] = Instance.new("UIPadding", zui["94"]);
+					zui["96"]["PaddingTop"] = UDim.new(0, 10);
+					zui["96"]["PaddingRight"] = UDim.new(0, 10);
+					zui["96"]["PaddingLeft"] = UDim.new(0, 10);
+					zui["96"]["PaddingBottom"] = UDim.new(0, 10);
+
+
+					-- StarterGui._zui.zMain.zTab.Dropdown.DropdownContainer
+					zui["97"] = Instance.new("Frame", zui["94"]);
+					zui["97"]["BorderSizePixel"] = 0;
+					zui["97"]["BackgroundColor3"] = Color3.fromRGB(47, 47, 47);
+					zui["97"]["ClipsDescendants"] = true;
+					zui["97"]["Size"] = UDim2.new(1, 0, 0, 25);
+					zui["97"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+					zui["97"]["Name"] = [[DropdownContainer]];
+					zui["97"]["LayoutOrder"] = 1;
+					dropdown.objects.container = zui["97"]
+					dropdown.objects.options = {}
+
+
+					-- StarterGui._zui.zMain.zTab.Dropdown.DropdownContainer.Selected
+					for index, option in pairs(dropdownConfig.options) do
+						dropdown.objects.options[index] = Instance.new("TextLabel", zui["97"]);
+						dropdown.objects.options[index]["TextWrapped"] = true;
+						dropdown.objects.options[index]["BorderSizePixel"] = 0;
+						dropdown.objects.options[index]["TextSize"] = 14;
+						dropdown.objects.options[index]["BackgroundColor3"] = index == dropdownConfig.default and Color3.fromRGB(24, 24, 24) or Color3.fromRGB(31, 31, 31);
+						dropdown.objects.options[index]["LayoutOrder"] = index
+						dropdown.objects.options[index]["FontFace"] = Font.new([[rbxasset://fonts/families/Inconsolata.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						dropdown.objects.options[index]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+						dropdown.objects.options[index]["Size"] = UDim2.new(1, 0, 0, 25);
+						dropdown.objects.options[index]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+						dropdown.objects.options[index]["Text"] = option;
+						dropdown.objects.options[index]["Name"] = option;
+						if index == dropdownConfig.default then
+							dropdown.objects.current = dropdown.objects.options[index]
+						end
+					end
+
+
+					-- StarterGui._zui.zMain.zTab.Dropdown.DropdownContainer.UIListLayout
+					zui["99"] = Instance.new("UIListLayout", zui["97"]);
+					zui["99"]["HorizontalFlex"] = Enum.UIFlexAlignment.SpaceBetween;
+					zui["99"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
+
+
+					-- StarterGui._zui.zMain.zTab.Dropdown.NameContainer
+					zui["9b"] = Instance.new("Frame", zui["94"]);
+					zui["9b"]["BorderSizePixel"] = 0;
+					zui["9b"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+					zui["9b"]["AutomaticSize"] = Enum.AutomaticSize.Y;
+					zui["9b"]["Size"] = UDim2.new(1, 0, 0, 0);
+					zui["9b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+					zui["9b"]["Name"] = [[NameContainer]];
+					zui["9b"]["LayoutOrder"] = -1;
+					zui["9b"]["BackgroundTransparency"] = 1;
+
+
+					-- StarterGui._zui.zMain.zTab.Dropdown.NameContainer.UIListLayout
+					zui["9c"] = Instance.new("UIListLayout", zui["9b"]);
+					zui["9c"]["HorizontalFlex"] = Enum.UIFlexAlignment.SpaceBetween;
+					zui["9c"]["VerticalAlignment"] = Enum.VerticalAlignment.Center;
+					zui["9c"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
+					zui["9c"]["FillDirection"] = Enum.FillDirection.Horizontal;
+
+
+					-- StarterGui._zui.zMain.zTab.Dropdown.NameContainer.UIPadding
+					zui["9d"] = Instance.new("UIPadding", zui["9b"]);
+					zui["9d"]["PaddingRight"] = UDim.new(0, -3);
+
+					-- StarterGui._zui.zMain.zTab.Dropdown.NameContainer.DropdownName
+					zui["9f"] = Instance.new("TextLabel", zui["9b"]);
+					zui["9f"]["TextWrapped"] = true;
+					zui["9f"]["BorderSizePixel"] = 0;
+					zui["9f"]["TextSize"] = 14;
+					zui["9f"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+					zui["9f"]["BackgroundColor3"] = Color3.fromRGB(255, 180, 243);
+					zui["9f"]["FontFace"] = Font.new([[rbxasset://fonts/families/Inconsolata.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+					zui["9f"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+					zui["9f"]["BackgroundTransparency"] = 1;
+					zui["9f"]["Size"] = UDim2.new(0, 100, 0, 0);
+					zui["9f"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+					zui["9f"]["Text"] = dropdownConfig.name;
+					zui["9f"]["AutomaticSize"] = Enum.AutomaticSize.Y;
+					zui["9f"]["Name"] = [[DropdownName]];
+				end
+				
+				local hover = false
+				local debounce = false
+				local expanded = false			
+
+				dropdown.refreshOptions = function()
+					dropdown.objects.options = {}
+					zuiLib.connections["DropdownOpt_" .. dropdown.myId] = {}
+					
+					for index, option in pairs(dropdown.objects.container:GetChildren()) do
+						if option:IsA("TextLabel") then
+							option:Destroy()
+						end
+					end
+					
+					for index, option in pairs(dropdownConfig.options) do
+						dropdown.objects.options[index] = Instance.new("TextLabel", zui["97"]);
+						dropdown.objects.options[index]["TextWrapped"] = true;
+						dropdown.objects.options[index]["BorderSizePixel"] = 0;
+						dropdown.objects.options[index]["TextSize"] = 14;
+						dropdown.objects.options[index]["BackgroundColor3"] = index == dropdownConfig.default and Color3.fromRGB(24, 24, 24) or Color3.fromRGB(31, 31, 31);
+						dropdown.objects.options[index]["LayoutOrder"] = index
+						dropdown.objects.options[index]["FontFace"] = Font.new([[rbxasset://fonts/families/Inconsolata.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						dropdown.objects.options[index]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+						dropdown.objects.options[index]["Size"] = UDim2.new(1, 0, 0, 25);
+						dropdown.objects.options[index]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+						dropdown.objects.options[index]["Text"] = option;
+						dropdown.objects.options[index]["Name"] = option;
+						if index == dropdownConfig.default then
+							dropdown.objects.current = dropdown.objects.options[index]
+						end
+
+						zuiLib.connections["DropdownOpt_" .. dropdown.myId]["i" .. index] = {}
+					end
+					
+					for index, option in pairs(dropdown.objects.options) do
+						local o_hover = false
+						local o_debounce = false
+
+						local optionMouseEnter = option.MouseEnter:Connect(function()
+							o_hover = true
+
+							local click = mouse.Button1Down:Connect(function()
+								task.wait()
+
+								if o_hover and not expanded then
+									if o_debounce then return end
+									o_debounce = true
+
+									dropdown.objects.current.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
+									dropdown.objects.current.LayoutOrder = option.LayoutOrder
+
+									dropdown.objects.current = option
+									dropdown.objects.current.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+									option.LayoutOrder = 1
+
+									dropdownConfig.callback(option.Text)
+
+									task.wait(.1)
+									o_debounce = false
+								end
+							end)
+						end)
+
+						local optionMouseLeave = option.MouseLeave:Connect(function()
+							o_hover = false
+						end)
+
+						zuiLib.connections["DropdownOpt_" .. dropdown.myId]["i" .. index] = {optionMouseEnter, optionMouseLeave}
+					end
+				end
+				
+				dropdown.updateProperties = function(config)
+					checkOptional(config, dropdownConfig)
+					dropdownConfig = config
+					dropdown.refreshOptions()
+				end	
+				
+				local mouseEnter = dropdown.objects.container.MouseEnter:Connect(function()
+					hover = true
+					
+					mouse.Button1Down:Connect(function()
+						if debounce then return end
+						debounce = true
+						
+						if not hover then else
+							expanded = not expanded
+							
+							if expanded then
+								dropdown.objects.container.Size = UDim2.new(1, 0, 0, #dropdown.objects.options * 25)
+							else
+								dropdown.objects.container.Size = UDim2.new(1, 0, 0, 25)
+							end
+						end
+						
+						task.wait(.1)
+						debounce = false
+					end)
+				end)
+				
+				local mouseLeave = dropdown.objects.container.MouseLeave:Connect(function()
+					hover = false
+				end)
+				
+				dropdown.refreshOptions()
+				zuiLib.connections["Dropdown_" .. dropdown.myId] = {mouseEnter, mouseLeave}
+			end
+			
+			dropdown.destroy = function()
+				if dropdown.objects.dropdown then
+					for index, connection in pairs(zuiLib.connections["Dropdown_" .. dropdown.myId]) do
+						connection:Disconnect()
+					end
+					
+					for index, array in pairs(zuiLib.connections["DropdownOpt_" .. dropdown.myId]) do
+						for index, connection in pairs(array) do
+							connection:Disconnect()
+						end
+					end
+					
+					dropdown.objects.dropdown:Destroy()
+				else
+					warn("z: No dropdown to destroy")
+				end
+			end
+			
+			dropdown.init()
+			return dropdown
+		end
+
 		return tab
 	end
-	
+
 	zuiClass.makeNotification = function(notiConfig)
 		local noti = {}
 		checkOptional(notiConfig, {
@@ -769,39 +1027,39 @@ zuiLib.initialize = function(s)
 			icon = "rbxassetid://10723415903",
 			duration = 5,
 		})
-		
+
 		noti.myId = global.elementCounter
 		global.elementCounter += 1
-		
+
 		local function init()
 			local hover = false
 			local newNotification = zui["2c"]:Clone()
 			newNotification.Parent = zui["28"]
 			newNotification.Visible = true
-			
+
 			local notiTitle = newNotification:WaitForChild("Title")
-			
+
 			local notiDuration = newNotification:WaitForChild("Duration")
 			local notiHourglass = notiDuration:WaitForChild("Filler")
-			
+
 			local notiContent = newNotification:WaitForChild("ContentContainer")
-			
+
 			local notiTextContent = notiContent:FindFirstChild("Content")
 			local notiIcon = notiContent:FindFirstChild("NotificationIcon")
-			
+
 			notiTitle.Text = notiConfig.name
 			notiTextContent.Text = notiConfig.content
 			notiIcon = notiConfig.icon
-			
+
 			d:AddItem(newNotification, notiConfig.duration)
 			ts:Create(notiHourglass, TweenInfo.new(notiConfig.duration), {Size = UDim2.new(0, 0, 1, 0)}):Play()
-			
+
 			local hover = false
 			local debounce = false
-			
+
 			local mouseEnter = newNotification.MouseEnter:Connect(function()
 				hover = true
-				
+
 				mouse.Button1Down:Connect(function()
 					if not hover then else
 						if debounce then
@@ -814,11 +1072,11 @@ zuiLib.initialize = function(s)
 					end
 				end)
 			end)
-			
+
 			local mouseLeave = newNotification.MouseLeave:Connect(function()
 				hover = false
 			end)
-			
+
 			zuiLib.connections["Notification_" .. noti.myId] = {mouseEnter, mouseLeave}
 
 			noti.notiObj = newNotification
@@ -826,23 +1084,23 @@ zuiLib.initialize = function(s)
 			noti.notiTextContent = notiTextContent
 			noti.notiHourglass = notiHourglass
 		end
-		
+
 		noti.destroy = function()
 			if noti.notiObj then
 				for index, connection in pairs(zuiLib.connections["Notification_" .. noti.myId]) do
 					connection:Disconnect()
 				end
-				
+
 				noti.notiObj:Destroy()
 			else
 				warn("z: No notification to destroy")
 			end
 		end
-		
+
 		init()
 		return noti
 	end
-	
+
 	uis.InputBegan:Connect(function(io, gpe)
 		if io.KeyCode == s.keybinds.toggleVis then
 			zui["2"]["Visible"] = not zui["2"]["Visible"]

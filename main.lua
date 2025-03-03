@@ -909,7 +909,7 @@ zuiLib.initialize = function(s)
 					end
 					
 					for index, option in pairs(dropdownConfig.options) do
-						dropdown.objects.options[index] = Instance.new("TextLabel", zui["97"]);
+						dropdown.objects.options[index] = Instance.new("TextLabel", dropdown.objects.container);
 						dropdown.objects.options[index]["TextWrapped"] = true;
 						dropdown.objects.options[index]["BorderSizePixel"] = 0;
 						dropdown.objects.options[index]["TextSize"] = 14;

@@ -303,12 +303,9 @@ zuiLib.initialize = function(s)
 				section.sectionObj = zui["7"]
 			end
 
-			section.update = function(newsectionConfig)
-				newsectionConfig = newsectionConfig or {
-					name = "New Section"
-				}
-
-				zui["8"]["Text"] = newsectionConfig.name;
+			section.updateProperties = function(config)
+				checkOptional(config, sectionConfig)
+				sectionConfig = config
 			end
 
 			section.destroy = function()
@@ -411,6 +408,11 @@ zuiLib.initialize = function(s)
 
 				local hover = false
 				local debounce = false
+				
+				toggle.updateProperties = function(config)
+					checkOptional(config, toggleConfig)
+					toggleConfig = config
+				end
 
 				local mouseEnter = toggle.toggler.MouseEnter:Connect(function()
 					hover = true
@@ -526,7 +528,12 @@ zuiLib.initialize = function(s)
 				local debounce = false
 
 				button.button = zui["1e"]
-
+				
+				button.updateProperties = function(config)
+					checkOptional(config, buttonConfig)
+					buttonConfig = config
+				end
+				
 				local mouseEnter = button.button.MouseEnter:Connect(function()
 					hover = true
 
@@ -793,14 +800,14 @@ zuiLib.initialize = function(s)
 
 
 					-- StarterGui._zui.zMain.zTab.Dropdown.UIListLayout
-					zui["95"] = Instance.new("UIListLayout", zui["94"]);
+					zui["95"] = Instance.new("UIListLayout", dropdown.objects.dropdown);
 					zui["95"]["HorizontalFlex"] = Enum.UIFlexAlignment.SpaceBetween;
 					zui["95"]["Padding"] = UDim.new(0, 5);
 					zui["95"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
 
 
 					-- StarterGui._zui.zMain.zTab.Dropdown.UIPadding
-					zui["96"] = Instance.new("UIPadding", zui["94"]);
+					zui["96"] = Instance.new("UIPadding", dropdown.objects.dropdown);
 					zui["96"]["PaddingTop"] = UDim.new(0, 10);
 					zui["96"]["PaddingRight"] = UDim.new(0, 10);
 					zui["96"]["PaddingLeft"] = UDim.new(0, 10);
@@ -808,7 +815,7 @@ zuiLib.initialize = function(s)
 
 
 					-- StarterGui._zui.zMain.zTab.Dropdown.DropdownContainer
-					zui["97"] = Instance.new("Frame", zui["94"]);
+					zui["97"] = Instance.new("Frame", dropdown.objects.dropdown);
 					zui["97"]["BorderSizePixel"] = 0;
 					zui["97"]["BackgroundColor3"] = Color3.fromRGB(47, 47, 47);
 					zui["97"]["ClipsDescendants"] = true;
@@ -822,7 +829,7 @@ zuiLib.initialize = function(s)
 
 					-- StarterGui._zui.zMain.zTab.Dropdown.DropdownContainer.Selected
 					for index, option in pairs(dropdownConfig.options) do
-						dropdown.objects.options[index] = Instance.new("TextLabel", zui["97"]);
+						dropdown.objects.options[index] = Instance.new("TextLabel", dropdown.objects.container);
 						dropdown.objects.options[index]["TextWrapped"] = true;
 						dropdown.objects.options[index]["BorderSizePixel"] = 0;
 						dropdown.objects.options[index]["TextSize"] = 14;
@@ -847,7 +854,7 @@ zuiLib.initialize = function(s)
 
 
 					-- StarterGui._zui.zMain.zTab.Dropdown.NameContainer
-					zui["9b"] = Instance.new("Frame", zui["94"]);
+					zui["9b"] = Instance.new("Frame", dropdown.objects.dropdown);
 					zui["9b"]["BorderSizePixel"] = 0;
 					zui["9b"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
 					zui["9b"]["AutomaticSize"] = Enum.AutomaticSize.Y;
